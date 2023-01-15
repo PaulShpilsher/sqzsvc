@@ -8,17 +8,24 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func GetIdenity(c *gin.Context) *token.Identity {
+	ident, ok := c.Get("identity")
+	if ok {
+		return ident.(*token.Identity)
+	} else {
+		return nil
+	}
+}
+
 func CurrentUser(c *gin.Context) {
-
-	userId, err := token.ExtractTokenID(c)
-
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	ident := GetIdenity(c)
+	if ident == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to get indentity"})
 		return
 	}
 
 	user := &models.User{}
-	if _, err := user.GetUserById(userId); err != nil {
+	if _, err := user.GetUserById(ident.UserId); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}

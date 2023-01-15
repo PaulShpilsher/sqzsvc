@@ -36,11 +36,13 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	token, err := token.GenerateToken(user.ID)
-	if err != nil {
+	if token, err := token.GenerateToken(&token.Identity{
+		UserId:    user.ID,
+		UserEmail: user.Email,
+	}); err != nil {
 		// cant generate token
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"token": token})
 	}
-
-	c.JSON(http.StatusOK, gin.H{"token": token})
 }
