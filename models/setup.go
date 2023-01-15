@@ -9,10 +9,10 @@ import (
 	"gorm.io/gorm"
 )
 
-var db *gorm.DB
+var Database *gorm.DB
 
 func ConnectDB() {
-	db = NewDB()
+	Database = NewDB()
 }
 
 func NewDB() *gorm.DB {
