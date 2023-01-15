@@ -1,4 +1,4 @@
-package services
+package token
 
 import (
 	"fmt"
@@ -12,7 +12,6 @@ import (
 )
 
 func GenerateToken(userId uint) (string, error) {
-
 	tokenLifespan, err := strconv.Atoi(os.Getenv("TOKEN_HOUR_LIFESPAN"))
 	if err != nil {
 		return "", err
@@ -36,11 +35,13 @@ func TokenValid(c *gin.Context) error {
 	tokenString := ExtractToken(c)
 	_, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(os.Getenv("API_SECRET")), nil
+		return []byte(os.Getenv("TOKEN_SECRET")), nil
 	})
+
 	if err != nil {
+		fmt.Println("", err)
 		return err
 	}
 	return nil
@@ -52,8 +53,9 @@ func ExtractToken(c *gin.Context) string {
 		return token
 	}
 	bearerToken := c.Request.Header.Get("Authorization")
-	if len(strings.Split(bearerToken, " ")) == 2 {
-		return strings.Split(bearerToken, " ")[1]
+	bearerTokenParts := strings.Split(bearerToken, " ")
+	if len(bearerTokenParts) == 2 {
+		return bearerTokenParts[1]
 	}
 	return ""
 }
@@ -63,9 +65,9 @@ func ExtractTokenID(c *gin.Context) (uint, error) {
 	tokenString := ExtractToken(c)
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(os.Getenv("API_SECRET")), nil
+		return []byte(os.Getenv("TOKEN_SECRET")), nil
 	})
 	if err != nil {
 		return 0, err

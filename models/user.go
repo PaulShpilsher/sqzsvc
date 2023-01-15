@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"html"
 	"sqzsvc/services"
 	"strings"
@@ -14,7 +15,17 @@ type User struct {
 	Password string `gorm:"size:255;not null;" json:"password"`
 }
 
+func (u *User) GetUserById(id uint) (*User, error) {
+
+	if err := Database.First(&u, id).Error; err != nil {
+		return u, errors.New("User not found")
+	}
+
+	return u, nil
+}
+
 func (u *User) GetUserByEmail(email string) (*User, error) {
+
 	if err := Database.Model(User{}).Where("email = ?", email).First(&u).Error; err != nil {
 		return &User{}, err
 	}

@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"sqzsvc/models"
 	"sqzsvc/services"
+	"sqzsvc/services/token"
 
 	"github.com/gin-gonic/gin"
 )
@@ -35,7 +36,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	token, err := services.GenerateToken(user.ID)
+	token, err := token.GenerateToken(user.ID)
 	if err != nil {
 		// cant generate token
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
