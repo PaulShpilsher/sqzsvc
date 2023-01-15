@@ -1,7 +1,9 @@
 // gin framework
 go get -u github.com/gin-gonic/gin
 // ORM library
-go get -u github.com/jinzhu/gorm
+go get -u gorm.io/gorm
+// Postgres driver
+go get -u gorm.io/driver/postgres
 // package that we will be used to authenticate and generate our JWT
 go get -u github.com/dgrijalva/jwt-go
 // to help manage our environment variables

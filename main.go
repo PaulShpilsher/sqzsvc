@@ -1,9 +1,12 @@
 package main
 
 import (
+	"log"
 	"sqzsvc/controllers"
+	"sqzsvc/models"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func initUserRoutes(apiRoute *gin.RouterGroup) {
@@ -15,6 +18,12 @@ func initUserRoutes(apiRoute *gin.RouterGroup) {
 }
 
 func main() {
+
+	if err := godotenv.Load(".env"); err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	models.ConnectDB()
 
 	r := gin.Default()
 
