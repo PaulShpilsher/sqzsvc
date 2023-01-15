@@ -3,6 +3,7 @@ package auth
 import (
 	"net/http"
 	"sqzsvc/models"
+	"sqzsvc/services"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,6 +25,12 @@ func Login(c *gin.Context) {
 	user := models.User{}
 	if _, err := user.GetUserByEmail(input.Email); err != nil {
 		// user not found
+		c.JSON(http.StatusBadRequest, gin.H{"error": "incorrect credentials"})
+		return
+	}
+
+	if err := services.VerifyPassword(input.Password, user.Password); err != nil {
+		// password mismatch
 		c.JSON(http.StatusBadRequest, gin.H{"error": "incorrect credentials"})
 		return
 	}
