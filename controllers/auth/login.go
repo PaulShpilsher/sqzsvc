@@ -35,15 +35,11 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, user)
+	token, err := services.GenerateToken(user.ID)
+	if err != nil {
+		// cant generate token
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+	}
 
-	// token, err := models.LoginCheck(u.Username, u.Password)
-
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "incorrect credentials"})
-	// 	return
-	// }
-
-	//	c.JSON(http.StatusOK, gin.H{"token": token})
-
+	c.JSON(http.StatusOK, gin.H{"token": token})
 }

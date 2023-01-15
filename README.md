@@ -5,7 +5,7 @@ go get -u gorm.io/gorm
 // Postgres driver
 go get -u gorm.io/driver/postgres
 // package that we will be used to authenticate and generate our JWT
-go get -u github.com/dgrijalva/jwt-go
+go get -u github.com/golang-jwt/jwt/v4
 // to help manage our environment variables
 go get -u github.com/joho/godotenv
 // to encrypt our user's password

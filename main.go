@@ -10,9 +10,7 @@ import (
 )
 
 func initUserRoutes(apiRoute *gin.RouterGroup) {
-
 	userRoute := apiRoute.Group("user")
-
 	userRoute.POST("/register", auth.Register)
 	userRoute.POST("/login", auth.Login)
 }
