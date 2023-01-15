@@ -1,8 +1,9 @@
-package controllers
+package auth
 
 import (
 	"net/http"
 	"sqzsvc/models"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,9 +20,11 @@ func Register(c *gin.Context) {
 		return
 	}
 
+	// TODO: validate input
+
 	user := models.User{
-		Email:    input.Email,
-		Password: input.Password,
+		Email:    strings.TrimSpace(input.Email),
+		Password: strings.TrimSpace(input.Password),
 	}
 
 	_, err := user.SaveUser()
@@ -30,5 +33,5 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "registration success"})
+	c.JSON(http.StatusOK, &user) // gin.H{"message": "registration success"})
 }

@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-	"sqzsvc/controllers"
+	"sqzsvc/controllers/auth"
 	"sqzsvc/models"
 
 	"github.com/gin-gonic/gin"
@@ -13,8 +13,8 @@ func initUserRoutes(apiRoute *gin.RouterGroup) {
 
 	userRoute := apiRoute.Group("user")
 
-	userRoute.POST("/register", controllers.Register)
-
+	userRoute.POST("/register", auth.Register)
+	userRoute.POST("/login", auth.Login)
 }
 
 func main() {
