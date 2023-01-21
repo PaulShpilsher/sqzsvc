@@ -17,7 +17,7 @@ type User struct {
 
 func (u *User) GetUserById(id uint) (*User, error) {
 
-	if err := Database.First(&u, id).Error; err != nil {
+	if err := db.First(&u, id).Error; err != nil {
 		return u, errors.New("User not found")
 	}
 
@@ -26,14 +26,14 @@ func (u *User) GetUserById(id uint) (*User, error) {
 
 func (u *User) GetUserByEmail(email string) (*User, error) {
 
-	if err := Database.Model(User{}).Where("email = ?", email).First(&u).Error; err != nil {
+	if err := db.Model(User{}).Where("email = ?", email).First(&u).Error; err != nil {
 		return &User{}, err
 	}
 	return u, nil
 }
 
 func (u *User) SaveUser() (*User, error) {
-	if err := Database.Create(&u).Error; err != nil {
+	if err := db.Create(&u).Error; err != nil {
 		return &User{}, err
 	}
 	return u, nil

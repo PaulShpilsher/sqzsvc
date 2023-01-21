@@ -3,6 +3,7 @@ package token
 import (
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"sqzsvc/models"
 	"strconv"
@@ -40,7 +41,7 @@ func GenerateToken(user *models.User) (string, error) {
 		emailClaimKey:  user.Email,
 		"exp":          time.Now().Add(time.Hour * time.Duration(tokenLifespan)).Unix(),
 	}
-	fmt.Println("claims", claims)
+	log.Println("claims", claims)
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	// fmt.Println("token", token)
@@ -81,6 +82,6 @@ func DecodeToken(encodedToken string) (*models.Identity, error) {
 		UserId:    uint(claims[userIdClaimKey].(float64)),
 		UserEmail: claims[emailClaimKey].(string),
 	}
-	fmt.Println("Decoded Idenoty", *ident)
+	log.Println("Decoded Idenoty", *ident)
 	return ident, nil
 }

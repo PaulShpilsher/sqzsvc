@@ -8,7 +8,7 @@ import (
 
 type Controller struct{}
 
-func (controller Controller) GetIdenity(c *gin.Context) (*models.Identity, bool) {
+func (controller *Controller) GetIdenity(c *gin.Context) (*models.Identity, bool) {
 	if ident, ok := c.Get("identity"); ok {
 		return ident.(*models.Identity), true
 	} else {

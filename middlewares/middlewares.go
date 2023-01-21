@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 	"sqzsvc/services/token"
 	"strings"
@@ -17,7 +17,7 @@ func JwtAuthMiddleware() gin.HandlerFunc {
 				c.Next()
 				return
 			} else {
-				fmt.Println("Token decoding failed", err)
+				log.Println("Token decoding failed", err)
 			}
 		}
 

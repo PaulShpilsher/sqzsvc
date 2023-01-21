@@ -16,20 +16,20 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	models.ConnectDB()
+	models.InitDb()
 
 	r := gin.Default()
 	{
 		apiRoute := r.Group("/api")
 		{
-			authController := controllers.AuthController{}
+			authController := &controllers.AuthController{}
 			route := apiRoute.Group("auth")
 			route.POST("/register", authController.Register)
 			route.POST("/login", authController.Login)
 		}
 
 		{
-			userController := controllers.UserController{}
+			userController := &controllers.UserController{}
 			route := apiRoute.Group("user")
 			route.Use(middlewares.JwtAuthMiddleware())
 			route.GET("/current", userController.CurrentUser)
