@@ -6,27 +6,27 @@ type ShortCodeService struct {
 	Identity *models.Identity
 }
 
-func (s *ShortCodeService) RegisterLongUrl(longUrl string) error {
+func (s *ShortCodeService) RegisterLongUrl(longUrl string) (string, error) {
 
 	// TODO: validate URL
+	// TODO: normalize URL
+
 	user := &models.User{}
 	if _, err := user.GetUserById(s.Identity.UserId); err != nil {
-		return err
+		return "", err
 	}
 
 	userUrl := &models.UserUrl{
-		UserId:    s.Identity.UserId,
-		LongUrl:   longUrl,
-		ShortCode: "aaa",
+		UserId:  s.Identity.UserId,
+		LongUrl: longUrl,
 	}
 
-	if _, err := userUrl.SaveUserUrl(); err != nil {
-		return err
+	// TODO: check if this user already registered this URL
+
+	// save / create
+	if _, err := userUrl.Save(); err != nil {
+		return "", err
 	}
 
-	return nil
+	return userUrl.ShortCode, nil
 }
-
-// func newShortCode() {
-
-// }

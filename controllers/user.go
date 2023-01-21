@@ -55,8 +55,12 @@ func (me *UserController) RegisterLongUrl(c *gin.Context) {
 		Identity: ident,
 	}
 
-	service.RegisterLongUrl(input.Url)
+	if shortCode, err := service.RegisterLongUrl(input.Url); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	} else {
+		// TODO: construct short url
 
-	c.JSON(http.StatusOK, gin.H{"message": "success", "data": ident})
+		c.JSON(http.StatusOK, gin.H{"shortCode": shortCode, "shortUrl": "http://localhost:5555/" + shortCode})
+	}
 
 }
