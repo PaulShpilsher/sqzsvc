@@ -7,3 +7,10 @@ type UserUrl struct {
 	UserId    uint   `gorm:"not null;"`
 	User      User   `gorm:"references:ID"`
 }
+
+func (u *UserUrl) SaveUserUrl() (*UserUrl, error) {
+	if err := db.Create(&u).Error; err != nil {
+		return &UserUrl{}, err
+	}
+	return u, nil
+}

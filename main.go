@@ -22,17 +22,18 @@ func main() {
 	{
 		apiRoute := r.Group("/api")
 		{
-			authController := &controllers.AuthController{}
 			route := apiRoute.Group("auth")
+			authController := &controllers.AuthController{}
 			route.POST("/register", authController.Register)
 			route.POST("/login", authController.Login)
 		}
 
 		{
-			userController := &controllers.UserController{}
 			route := apiRoute.Group("user")
+			userController := &controllers.UserController{}
 			route.Use(middlewares.JwtAuthMiddleware())
 			route.GET("/current", userController.CurrentUser)
+			route.POST("/url", userController.RegisterLongUrl)
 		}
 	}
 

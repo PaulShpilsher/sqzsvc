@@ -3,7 +3,7 @@ package models
 import (
 	"errors"
 	"html"
-	"sqzsvc/services"
+	"sqzsvc/utils"
 	"strings"
 
 	"gorm.io/gorm"
@@ -25,16 +25,9 @@ func (u *User) GetUserById(id uint) (*User, error) {
 }
 
 func (u *User) GetUserByEmail(email string) (*User, error) {
-
-	result := db.Limit(1).Where(&User{Email: email}).Find(&u)
-	if result.Error != nil {
-		return &User{}, result.Error
+	if err := db.Limit(1).Where(&User{Email: email}).Find(&u).Error; err != nil {
+		return &User{}, err
 	}
-
-	//	errors.Is(result.Error, gorm.ErrRecordNotFound)
-	// if err := db.Model(User{}).Where("email = ?", email).First(&u).Error; err != nil {
-	// 	return &User{}, err
-	// }
 	return u, nil
 }
 
@@ -45,10 +38,10 @@ func (u *User) SaveUser() (*User, error) {
 	return u, nil
 }
 
-func (u *User) BeforeSave(tx *gorm.DB) error {
+func (u *User) BeforeSave(tx *gorm.DB) (err error) {
 
 	//turn password into hash
-	hashedPassword, err := services.HashPassword(u.Password)
+	hashedPassword, err := utils.HashPassword(u.Password)
 	if err != nil {
 		return err
 	}
@@ -57,6 +50,10 @@ func (u *User) BeforeSave(tx *gorm.DB) error {
 	//remove spaces in username
 	u.Email = html.EscapeString(strings.TrimSpace(u.Email))
 
-	return nil
-
+	return
 }
+
+// func (u *User) AfterFind(tx *gorm.DB) (err error) {
+// 	u.Password = ""
+// 	return
+// }

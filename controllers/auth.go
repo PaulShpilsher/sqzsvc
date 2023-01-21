@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 	"sqzsvc/models"
-	"sqzsvc/services"
 	"sqzsvc/services/token"
+	"sqzsvc/utils"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -14,6 +14,8 @@ import (
 type AuthController struct {
 	*Controller
 }
+
+///////////  Register new user
 
 type RegisterInput struct {
 	Email    string `json:"email" binding:"required"`
@@ -45,7 +47,7 @@ func (me *AuthController) Register(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "registration success"})
 }
 
-///////////  Login Handler
+///////////  Login user
 
 type LoginInput struct {
 	Email    string `json:"email" binding:"required"`
@@ -68,7 +70,7 @@ func (me *AuthController) Login(c *gin.Context) {
 		return
 	}
 
-	if err := services.VerifyPassword(input.Password, user.Password); err != nil {
+	if err := utils.VerifyPassword(input.Password, user.Password); err != nil {
 		// password mismatch
 		c.JSON(http.StatusBadRequest, gin.H{"error": "incorrect credentials"})
 		return
