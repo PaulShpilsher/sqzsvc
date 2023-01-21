@@ -6,13 +6,28 @@ import (
 	"os"
 	"sqzsvc/models"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
 )
 
-const USER_ID_CLAIM = "userId"
-const EMAIL_CLAIM = "email"
+const (
+	userIdClaimKey = "userId"
+	emailClaimKey  = "email"
+)
+
+var (
+	signatureKey []byte = nil
+	once         sync.Once
+)
+
+func getSignatureKey() []byte {
+	once.Do(func() {
+		signatureKey = []byte(os.Getenv("TOKEN_SECRET"))
+	})
+	return signatureKey
+}
 
 func GenerateToken(user *models.User) (string, error) {
 	tokenLifespan, err := strconv.Atoi(os.Getenv("TOKEN_HOUR_LIFESPAN"))
@@ -21,16 +36,16 @@ func GenerateToken(user *models.User) (string, error) {
 	}
 
 	claims := jwt.MapClaims{
-		USER_ID_CLAIM: user.ID,
-		EMAIL_CLAIM:   user.Email,
-		"exp":         time.Now().Add(time.Hour * time.Duration(tokenLifespan)).Unix(),
+		userIdClaimKey: user.ID,
+		emailClaimKey:  user.Email,
+		"exp":          time.Now().Add(time.Hour * time.Duration(tokenLifespan)).Unix(),
 	}
 	fmt.Println("claims", claims)
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	// fmt.Println("token", token)
 
-	tokenString, err := token.SignedString([]byte(os.Getenv("TOKEN_SECRET")))
+	tokenString, err := token.SignedString(getSignatureKey())
 	// fmt.Println("tokenString", tokenString, err)
 	return tokenString, err
 }
@@ -41,7 +56,7 @@ func DecodeToken(encodedToken string) (*models.Identity, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(os.Getenv("TOKEN_SECRET")), nil
+		return getSignatureKey(), nil
 	})
 	if err != nil {
 		return &models.Identity{}, err
@@ -63,8 +78,8 @@ func DecodeToken(encodedToken string) (*models.Identity, error) {
 	}
 
 	ident := &models.Identity{
-		UserId:    uint(claims[USER_ID_CLAIM].(float64)),
-		UserEmail: claims[EMAIL_CLAIM].(string),
+		UserId:    uint(claims[userIdClaimKey].(float64)),
+		UserEmail: claims[emailClaimKey].(string),
 	}
 	fmt.Println("Decoded Idenoty", *ident)
 	return ident, nil
