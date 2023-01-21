@@ -2,25 +2,13 @@ package main
 
 import (
 	"log"
-	"sqzsvc/controllers/auth"
+	"sqzsvc/controllers"
 	"sqzsvc/middlewares"
 	"sqzsvc/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
-
-func initAuthRoutes(apiRoute *gin.RouterGroup) {
-	route := apiRoute.Group("auth")
-	route.POST("/register", auth.Register)
-	route.POST("/login", auth.Login)
-}
-
-func initAdminRoutes(apiRoute *gin.RouterGroup) {
-	route := apiRoute.Group("user")
-	route.Use(middlewares.JwtAuthMiddleware())
-	route.GET("/current", auth.CurrentUser)
-}
 
 func main() {
 
@@ -31,10 +19,22 @@ func main() {
 	models.ConnectDB()
 
 	r := gin.Default()
+	{
+		apiRoute := r.Group("/api")
+		{
+			authController := controllers.AuthController{}
+			route := apiRoute.Group("auth")
+			route.POST("/register", authController.Register)
+			route.POST("/login", authController.Login)
+		}
 
-	apiRoute := r.Group("/api")
-	initAuthRoutes(apiRoute)
-	initAdminRoutes(apiRoute)
+		{
+			userController := controllers.UserController{}
+			route := apiRoute.Group("user")
+			route.Use(middlewares.JwtAuthMiddleware())
+			route.GET("/current", userController.CurrentUser)
+		}
+	}
 
 	r.Run(":5555")
 }

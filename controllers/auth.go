@@ -1,20 +1,55 @@
-package auth
+package controllers
 
 import (
 	"net/http"
 	"sqzsvc/models"
 	"sqzsvc/services"
 	"sqzsvc/services/token"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
+
+type AuthController struct {
+	*Controller
+}
+
+type RegisterInput struct {
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
+
+func (me *AuthController) Register(c *gin.Context) {
+	var input RegisterInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// TODO: validate input
+
+	user := models.User{
+		Email:    strings.TrimSpace(input.Email),
+		Password: strings.TrimSpace(input.Password),
+	}
+
+	_, err := user.SaveUser()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, &user) // gin.H{"message": "registration success"})
+}
+
+///////////  Login Handler
 
 type LoginInput struct {
 	Email    string `json:"email" binding:"required"`
 	Password string `json:"password" binding:"required"`
 }
 
-func Login(c *gin.Context) {
+func (me *AuthController) Login(c *gin.Context) {
 
 	var input LoginInput
 

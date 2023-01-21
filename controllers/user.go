@@ -1,15 +1,18 @@
-package auth
+package controllers
 
 import (
 	"net/http"
-	"sqzsvc/controllers"
 	"sqzsvc/models"
 
 	"github.com/gin-gonic/gin"
 )
 
-func CurrentUser(c *gin.Context) {
-	ident, ok := controllers.Controller{}.GetIdenity(c)
+type UserController struct {
+	*Controller
+}
+
+func (me *UserController) CurrentUser(c *gin.Context) {
+	ident, ok := me.GetIdenity(c)
 	if !ok {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to get indentity"})
 		return
