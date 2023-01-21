@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 	"sqzsvc/models"
 	"sqzsvc/services"
@@ -39,7 +40,9 @@ func (me *AuthController) Register(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, &user) // gin.H{"message": "registration success"})
+	log.Println("User registered", user)
+
+	c.JSON(http.StatusOK, gin.H{"message": "registration success"})
 }
 
 ///////////  Login Handler

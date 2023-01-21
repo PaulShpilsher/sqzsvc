@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 	"sqzsvc/models"
 
@@ -27,4 +28,16 @@ func (me *UserController) CurrentUser(c *gin.Context) {
 	user.Password = ""
 
 	c.JSON(http.StatusOK, gin.H{"message": "success", "data": user})
+}
+
+func (me *UserController) RegosterLongUrl(c *gin.Context) {
+	ident, ok := me.GetIdenity(c)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to get indentity"})
+		return
+	}
+
+	log.Println(ident)
+	c.JSON(http.StatusOK, gin.H{"message": "success", "data": ident})
+
 }

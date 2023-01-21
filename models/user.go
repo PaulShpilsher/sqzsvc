@@ -10,8 +10,8 @@ import (
 )
 
 type User struct {
-	gorm.Model
-	Email    string `gorm:"size:255;not null;unique" json:"email"`
+	Model
+	Email    string `gorm:"size:64;not null;uniqueIndex;<-:create" json:"email"`
 	Password string `gorm:"size:255;not null;" json:"password"`
 }
 
@@ -26,9 +26,15 @@ func (u *User) GetUserById(id uint) (*User, error) {
 
 func (u *User) GetUserByEmail(email string) (*User, error) {
 
-	if err := db.Model(User{}).Where("email = ?", email).First(&u).Error; err != nil {
-		return &User{}, err
+	result := db.Limit(1).Where(&User{Email: email}).Find(&u)
+	if result.Error != nil {
+		return &User{}, result.Error
 	}
+
+	//	errors.Is(result.Error, gorm.ErrRecordNotFound)
+	// if err := db.Model(User{}).Where("email = ?", email).First(&u).Error; err != nil {
+	// 	return &User{}, err
+	// }
 	return u, nil
 }
 

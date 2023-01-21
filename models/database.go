@@ -22,7 +22,7 @@ func InitDb() {
 		log.Fatal(err)
 	}
 
-	if err := database.AutoMigrate(&User{}); err != nil {
+	if err := database.AutoMigrate(&User{}, &UserUrl{}); err != nil {
 		log.Fatalf("failed migrate database: %s", err.Error())
 	}
 
