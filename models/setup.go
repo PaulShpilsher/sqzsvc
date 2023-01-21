@@ -12,10 +12,10 @@ import (
 var Database *gorm.DB
 
 func ConnectDB() {
-	Database = NewDB()
+	Database = newDB()
 }
 
-func NewDB() *gorm.DB {
+func newDB() *gorm.DB {
 	dsn := os.Getenv("DB_CONNECTION")
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
