@@ -33,3 +33,9 @@ func (u *UserUrl) GetByUserAndUrl() (*UserUrl, bool) {
 	ok := !errors.Is(tx.Error, gorm.ErrRecordNotFound) && tx.RowsAffected == 1
 	return u, ok
 }
+
+func (u *UserUrl) GetByShortCode(shortCode string) (*UserUrl, bool) {
+	tx := db.Limit(1).Where(&UserUrl{ShortCode: shortCode}).Find(&u)
+	ok := !errors.Is(tx.Error, gorm.ErrRecordNotFound) && tx.RowsAffected == 1
+	return u, ok
+}

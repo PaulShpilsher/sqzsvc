@@ -1,6 +1,9 @@
 package services
 
-import models "sqzsvc/models"
+import (
+	"fmt"
+	models "sqzsvc/models"
+)
 
 type ShortCodeService struct {
 	Identity *models.Identity
@@ -22,4 +25,14 @@ func (s *ShortCodeService) RegisterLongUrl(longUrl string) (string, error) {
 	}
 
 	return userUrl.ShortCode, err
+}
+
+func (s *ShortCodeService) GetLongUrl(shortCode string) (string, error) {
+
+	userUrl := &models.UserUrl{}
+	if _, ok := userUrl.GetByShortCode(shortCode); !ok {
+		return "", fmt.Errorf("short code '%s' not found", shortCode)
+	}
+
+	return userUrl.LongUrl, nil
 }

@@ -19,6 +19,8 @@ func main() {
 	models.InitDb()
 
 	r := gin.Default()
+
+	r.GET("/:shortCode", (&controllers.UrlController{}).GotoLongUrl)
 	{
 		apiRoute := r.Group("/api")
 		{
