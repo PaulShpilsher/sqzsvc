@@ -8,10 +8,10 @@ import (
 
 type UserUrl struct {
 	Model
-	LongUrl   string `gorm:"size:255;not null;"`
-	ShortCode string `gorm:"size:11;not null;uniqueIndex"`
 	UserId    uint   `gorm:"not null;"`
 	User      User   `gorm:"references:ID"`
+	ShortCode string `gorm:"type:varchar(11);not null;uniqueIndex"`
+	LongUrl   string `gorm:"type:VARCHAR(4000);not null;"`
 }
 
 func (u *UserUrl) Save() (*UserUrl, error) {
