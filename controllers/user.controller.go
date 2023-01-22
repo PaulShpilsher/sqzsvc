@@ -3,8 +3,10 @@ package controllers
 import (
 	"log"
 	"net/http"
+	"net/url"
 	"sqzsvc/models"
 	"sqzsvc/services"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -45,22 +47,21 @@ func (me *UserController) RegisterLongUrl(c *gin.Context) {
 	log.Println(ident)
 
 	var input RegisterLongUrlInput
-
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	service := &services.ShortCodeService{
-		Identity: ident,
+	url, err := url.ParseRequestURI(strings.TrimSpace(input.Url))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
-	if shortCode, err := service.RegisterLongUrl(input.Url); err != nil {
+	service := &services.ShortCodeService{Identity: ident}
+	if shortCode, err := service.RegisterLongUrl(url.String()); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	} else {
-		// TODO: construct short url
-
-		c.JSON(http.StatusOK, gin.H{"shortCode": shortCode, "shortUrl": "http://localhost:5555/" + shortCode})
+		c.JSON(http.StatusOK, gin.H{"shortCode": shortCode})
 	}
-
 }
