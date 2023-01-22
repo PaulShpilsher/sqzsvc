@@ -25,17 +25,13 @@ func (u *User) GetUserById(id uint) (*User, error) {
 }
 
 func (u *User) GetUserByEmail(email string) (*User, error) {
-	if err := db.Limit(1).Where(&User{Email: email}).Find(&u).Error; err != nil {
-		return &User{}, err
-	}
-	return u, nil
+	err := db.Limit(1).Where(&User{Email: email}).Find(&u).Error
+	return u, err
 }
 
 func (u *User) SaveUser() (*User, error) {
-	if err := db.Create(&u).Error; err != nil {
-		return &User{}, err
-	}
-	return u, nil
+	err := db.Create(&u).Error
+	return u, err
 }
 
 func (u *User) BeforeSave(tx *gorm.DB) (err error) {

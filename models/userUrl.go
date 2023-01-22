@@ -32,3 +32,8 @@ func (u *UserUrl) BeforeCreate(tx *gorm.DB) error {
 		return nil
 	}
 }
+
+func (u *UserUrl) LookupExisting() (*UserUrl, error) {
+	err := db.Limit(1).Where(&UserUrl{UserId: u.UserId, LongUrl: u.LongUrl}).Find(&u).Error
+	return u, err
+}
