@@ -18,8 +18,8 @@ type AuthController struct {
 ///////////  Register new user
 
 type RegisterInput struct {
-	Email    string `json:"email" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	Email    string `json:"email" binding:"required"`    // max 256 chars
+	Password string `json:"password" binding:"required"` // max 72 chars
 }
 
 func (me *AuthController) Register(c *gin.Context) {
@@ -50,8 +50,8 @@ func (me *AuthController) Register(c *gin.Context) {
 ///////////  Login user
 
 type LoginInput struct {
-	Email    string `json:"email" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	Email    string `json:"email" binding:"required"`    // max 256 chars
+	Password string `json:"password" binding:"required"` // max 72 chars
 }
 
 func (me *AuthController) Login(c *gin.Context) {
@@ -63,8 +63,8 @@ func (me *AuthController) Login(c *gin.Context) {
 		return
 	}
 
-	user := models.User{}
-	if _, err := user.GetUserByEmail(input.Email); err != nil {
+	user := &models.User{}
+	if _, ok := user.GetUserByEmail(input.Email); !ok {
 		// user not found
 		c.JSON(http.StatusBadRequest, gin.H{"error": "incorrect credentials"})
 		return
@@ -76,7 +76,7 @@ func (me *AuthController) Login(c *gin.Context) {
 		return
 	}
 
-	if token, err := token.GenerateToken(&user); err != nil {
+	if token, err := token.GenerateToken(user); err != nil {
 		// cant generate token
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
 	} else {

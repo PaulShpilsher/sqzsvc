@@ -79,7 +79,7 @@ func DecodeToken(encodedToken string) (*models.Identity, error) {
 	}
 
 	ident := &models.Identity{
-		UserId:    uint(claims[userIdClaimKey].(float64)),
+		UserID:    uint(claims[userIdClaimKey].(float64)),
 		UserEmail: claims[emailClaimKey].(string),
 	}
 	log.Println("Decoded Idenoty", *ident)

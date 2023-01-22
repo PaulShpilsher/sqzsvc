@@ -10,6 +10,26 @@ import (
 	"github.com/joho/godotenv"
 )
 
+func registerRoutes(g *gin.Engine) {
+	authController := &controllers.AuthController{}
+	urlController := &controllers.UrlController{}
+
+	g.GET("/:shortCode", urlController.GotoLongUrl)
+
+	apiRoute := g.Group("/api")
+	{
+		route := apiRoute.Group("auth")
+		route.POST("/register", authController.Register)
+		route.POST("/login", authController.Login)
+	}
+
+	{
+		route := apiRoute.Group("short-code")
+		route.Use(middlewares.JwtAuthMiddleware())
+		route.POST("/", urlController.CreateShortCode)
+	}
+}
+
 func main() {
 
 	if err := godotenv.Load(".env"); err != nil {
@@ -19,23 +39,7 @@ func main() {
 	models.InitDb()
 
 	r := gin.Default()
-	{
-		apiRoute := r.Group("/api")
-		{
-			route := apiRoute.Group("auth")
-			authController := &controllers.AuthController{}
-			route.POST("/register", authController.Register)
-			route.POST("/login", authController.Login)
-		}
-
-		{
-			route := apiRoute.Group("user")
-			userController := &controllers.UserController{}
-			route.Use(middlewares.JwtAuthMiddleware())
-			route.GET("/current", userController.CurrentUser)
-			route.POST("/url", userController.RegisterLongUrl)
-		}
-	}
+	registerRoutes(r)
 
 	r.Run(":5555")
 }
