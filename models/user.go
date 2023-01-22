@@ -11,8 +11,9 @@ import (
 
 type User struct {
 	Model
-	Email    string `gorm:"size:64;not null;uniqueIndex;<-:create" json:"email"`
-	Password string `gorm:"size:255;not null;" json:"password"`
+	Email    string    `gorm:"size:256;not null;uniqueIndex;<-:create" json:"email"`
+	Password string    `gorm:"size:64;not null;" json:"password"`
+	UserUrls []UserUrl `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 func (u *User) GetUserById(id uint) (*User, error) {
@@ -24,9 +25,10 @@ func (u *User) GetUserById(id uint) (*User, error) {
 	return u, nil
 }
 
-func (u *User) GetUserByEmail(email string) (*User, error) {
-	err := db.Limit(1).Where(&User{Email: email}).Find(&u).Error
-	return u, err
+func (u *User) GetUserByEmail(email string) (*User, bool) {
+	tx := db.Limit(1).Where(&User{Email: email}).Find(&u)
+	ok := !errors.Is(tx.Error, gorm.ErrRecordNotFound) && tx.RowsAffected == 1
+	return u, ok
 }
 
 func (u *User) SaveUser() (*User, error) {

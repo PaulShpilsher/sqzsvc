@@ -11,22 +11,15 @@ func (s *ShortCodeService) RegisterLongUrl(longUrl string) (string, error) {
 	// TODO: validate URL
 	// TODO: normalize URL
 
-	user := &models.User{}
-	if _, err := user.GetUserById(s.Identity.UserId); err != nil {
-		return "", err
-	}
-
 	userUrl := &models.UserUrl{
-		UserId:  s.Identity.UserId,
+		UserID:  s.Identity.UserID,
 		LongUrl: longUrl,
 	}
 
-	// TODO: check if this user already registered this URL
-
-	// save / create
-	if _, err := userUrl.Save(); err != nil {
-		return "", err
+	var err error
+	if _, ok := userUrl.GetByUserAndUrl(); !ok {
+		err = userUrl.Save()
 	}
 
-	return userUrl.ShortCode, nil
+	return userUrl.ShortCode, err
 }

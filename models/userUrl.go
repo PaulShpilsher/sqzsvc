@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"sqzsvc/utils"
 
 	"gorm.io/gorm"
@@ -8,19 +9,13 @@ import (
 
 type UserUrl struct {
 	Model
-	UserId    uint   `gorm:"not null;"`
-	User      User   `gorm:"references:ID"`
+	UserID    uint   `gorm:"not null"`
 	ShortCode string `gorm:"type:varchar(11);not null;uniqueIndex"`
 	LongUrl   string `gorm:"type:VARCHAR(4000);not null;"`
 }
 
-func (u *UserUrl) Save() (*UserUrl, error) {
-
-	if err := db.Create(&u).Error; err != nil {
-		return &UserUrl{}, err
-	} else {
-		return u, nil
-	}
+func (u *UserUrl) Save() error {
+	return db.Create(&u).Error
 }
 
 func (u *UserUrl) BeforeCreate(tx *gorm.DB) error {
@@ -33,7 +28,8 @@ func (u *UserUrl) BeforeCreate(tx *gorm.DB) error {
 	}
 }
 
-func (u *UserUrl) LookupExisting() (*UserUrl, error) {
-	err := db.Limit(1).Where(&UserUrl{UserId: u.UserId, LongUrl: u.LongUrl}).Find(&u).Error
-	return u, err
+func (u *UserUrl) GetByUserAndUrl() (*UserUrl, bool) {
+	tx := db.Limit(1).Where(&UserUrl{UserID: u.UserID, LongUrl: u.LongUrl}).Find(&u)
+	ok := !errors.Is(tx.Error, gorm.ErrRecordNotFound) && tx.RowsAffected == 1
+	return u, ok
 }

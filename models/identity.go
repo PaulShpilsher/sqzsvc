@@ -1,6 +1,6 @@
 package models
 
 type Identity struct {
-	UserId    uint
+	UserID    uint
 	UserEmail string
 }

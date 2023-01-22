@@ -21,7 +21,7 @@ func (me *UserController) CurrentUser(c *gin.Context) {
 	}
 
 	user := &models.User{}
-	if _, err := user.GetUserById(ident.UserId); err != nil {
+	if _, err := user.GetUserById(ident.UserID); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
