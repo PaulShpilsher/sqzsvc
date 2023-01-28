@@ -3,6 +3,7 @@ package middlewares
 import (
 	"log"
 	"net/http"
+	"sqzsvc/controllers"
 	"sqzsvc/services/token"
 	"strings"
 
@@ -13,7 +14,7 @@ func JwtAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if encodedToken := extractToken(c); encodedToken != "" {
 			if identity, err := token.DecodeToken(encodedToken); err == nil {
-				c.Set("identity", identity)
+				controllers.SetIdentity(c, identity)
 				c.Next()
 				return
 			} else {

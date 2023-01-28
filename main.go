@@ -2,8 +2,8 @@ package main
 
 import (
 	"log"
-	"sqzsvc/controllers"
 	authController "sqzsvc/controllers/auth"
+	urlController "sqzsvc/controllers/url"
 	"sqzsvc/middlewares"
 	"sqzsvc/models"
 
@@ -12,8 +12,6 @@ import (
 )
 
 func registerRoutes(g *gin.Engine) {
-	urlController := &controllers.UrlController{}
-
 	g.GET("/:shortCode", urlController.GotoLongUrl)
 
 	apiRoute := g.Group("/api")
@@ -41,5 +39,5 @@ func main() {
 	r := gin.Default()
 	registerRoutes(r)
 
-	r.Run(":5555")
+	r.Run("localhost:5555")
 }

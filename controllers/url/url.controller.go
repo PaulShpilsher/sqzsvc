@@ -1,21 +1,18 @@
-package controllers
+package url
 
 import (
 	"log"
 	"net/http"
 	"net/url"
+	"sqzsvc/controllers"
 	"sqzsvc/services"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
-type UrlController struct {
-	*Controller
-}
-
 // GET: /:shortCode
-func (me *UrlController) GotoLongUrl(c *gin.Context) {
+func GotoLongUrl(c *gin.Context) {
 
 	shortCode := strings.TrimSpace(c.Param("shortCode"))
 	if len(shortCode) == 0 {
@@ -47,14 +44,12 @@ type RegisterLongUrlInput struct {
 }
 
 // POST: /api/short-code
-func (me *UrlController) CreateShortCode(c *gin.Context) {
-	ident, ok := me.GetIdenity(c)
+func CreateShortCode(c *gin.Context) {
+	ident, ok := controllers.GetIdentity(c)
 	if !ok {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "unable to get indentity"})
 		return
 	}
-
-	log.Println(ident)
 
 	var input RegisterLongUrlInput
 	if err := c.ShouldBindJSON(&input); err != nil {
