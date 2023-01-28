@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 	authController "sqzsvc/controllers/auth"
 	urlController "sqzsvc/controllers/url"
 	"sqzsvc/middlewares"
@@ -36,7 +37,14 @@ func main() {
 
 	models.InitDb()
 
+	if _, ok := os.LookupEnv("DEBUG"); !ok {
+		gin.SetMode(gin.ReleaseMode)
+	} else {
+		log.Println("DEBUG MODE")
+	}
+
 	r := gin.Default()
+
 	registerRoutes(r)
 
 	r.Run(":5555")
