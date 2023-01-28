@@ -1,5 +1,12 @@
 .PHONY: postgres adminer migrate migrate-down dev
 
+docker:
+	docker build -t sqzsvc-app .
+
+docker-run:
+	docker run -it --rm -p 5555:5555 --name sqzsvc-instance sqzsvc-app
+
+
 build:
 	go build -o bin/
 
