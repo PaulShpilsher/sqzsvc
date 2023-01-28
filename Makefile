@@ -1,18 +1,26 @@
-.PHONY: postgres adminer migrate migrate-down dev
 
+.PHONY: docker-build
 docker-build:
 	docker build -t sqzsvc .
 
-docker-local-run:
+.PHONY: docker-run
+docker-run:
 	docker run -it --rm -p 5555:5555 --network host --name sqzsvc-app sqzsvc
 
 
+.PHONY: build
 build:
 	go build -o bin/
 
-dev:
+.PHONY: serve
+serve:
 	go run main.go
 
+.PHONY: dev
+dev:
+	DEBUG=1 && go run main.go
+
+.PHONY: postgres
 postgres:
 	docker run --rm -ti --network host \
 		-e POSTGRES_PASSWORD=secret \
@@ -20,6 +28,7 @@ postgres:
 		--name postgresql-sqz \
 		postgres
 
+.PHONY: adminer
 adminer:
 	docker run --rm -ti --network host adminer
 

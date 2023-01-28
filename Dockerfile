@@ -9,9 +9,12 @@ RUN go mod download && go mod verify
 COPY . .
 RUN go build -v -o /tmp ./...
 
+# Runtime image
 
 FROM golang:1.19.5-alpine
+
 WORKDIR /app
+
 COPY --from=build-env /tmp/sqzsvc /app
 COPY --from=build-env /usr/src/app/.env  /app
 
