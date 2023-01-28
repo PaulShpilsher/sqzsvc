@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 	"sqzsvc/controllers"
-	"sqzsvc/services/token"
+	tokenService "sqzsvc/services/token"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -13,7 +13,7 @@ import (
 func JwtAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if encodedToken := extractToken(c); encodedToken != "" {
-			if identity, err := token.DecodeToken(encodedToken); err == nil {
+			if identity, err := tokenService.DecodeToken(encodedToken); err == nil {
 				controllers.SetIdentity(c, identity)
 				c.Next()
 				return

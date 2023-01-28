@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"net/url"
 	"sqzsvc/controllers"
-	"sqzsvc/services"
+	urlService "sqzsvc/services/url"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -20,8 +20,7 @@ func GotoLongUrl(c *gin.Context) {
 		return
 	}
 
-	service := &services.ShortCodeService{}
-	if longUrl, err := service.GetLongUrl(shortCode); err == nil {
+	if longUrl, err := urlService.GetLongUrl(shortCode); err == nil {
 		// TODO: Log click with client IP ip := c.ClientIP()
 		c.Redirect(http.StatusFound, longUrl)
 	} else {
@@ -38,7 +37,7 @@ type RegisterLongUrlInput struct {
 
 // POST: /api/short-code
 func CreateShortCode(c *gin.Context) {
-	ident, ok := controllers.GetIdentity(c)
+	identity, ok := controllers.GetIdentity(c)
 	if !ok {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "unable to get indentity"})
 		return
@@ -56,8 +55,7 @@ func CreateShortCode(c *gin.Context) {
 		return
 	}
 
-	service := &services.ShortCodeService{Identity: ident}
-	if shortCode, err := service.RegisterLongUrl(url.String()); err != nil {
+	if shortCode, err := urlService.RegisterLongUrl(identity, url.String()); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	} else {
 		c.JSON(http.StatusOK, gin.H{"shortCode": shortCode})
