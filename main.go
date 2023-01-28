@@ -12,7 +12,7 @@ import (
 )
 
 func registerRoutes(g *gin.Engine) {
-	g.GET("/:shortCode", urlController.GotoLongUrl)
+	g.GET("/:shortCode", urlController.RedirectShortCode)
 
 	apiRoute := g.Group("/api")
 	{

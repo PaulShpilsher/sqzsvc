@@ -3,28 +3,29 @@ package auth
 import (
 	"log"
 	"net/http"
+	"sqzsvc/controllers"
 	"sqzsvc/models"
 	"sqzsvc/services/token"
 	"sqzsvc/utils"
-	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 )
 
 ///////////  Register new user
 
 func Register(c *gin.Context) {
 
-	credentials, err := getCredentials(c)
-	if err != nil {
+	input := &CredentialsInput{}
+	if err := controllers.GetFromBodyValidated(c, input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
+	// TODO: apply password policy validation (e.g. does not contain whitespaces, etc..)
+
 	user := models.User{
-		Email:    strings.TrimSpace(credentials.Email),
-		Password: strings.TrimSpace(credentials.Password),
+		Email:    input.Email,
+		Password: input.Password,
 	}
 
 	if _, err := user.SaveUser(); err != nil {
@@ -40,20 +41,19 @@ func Register(c *gin.Context) {
 
 func Login(c *gin.Context) {
 
-	credentials, err := getCredentials(c)
-	if err != nil {
+	input := &CredentialsInput{}
+	if err := controllers.GetFromBodyValidated(c, input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	user := &models.User{}
-	if _, ok := user.GetUserByEmail(credentials.Email); !ok {
+	if _, ok := user.GetUserByEmail(input.Email); !ok {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "incorrect credentials"})
 		return
 	}
 
-	err = utils.VerifyPassword(credentials.Password, user.Password)
-	if err != nil {
+	if err := utils.VerifyPassword(input.Password, user.Password); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "incorrect credentials"})
 		return
 	}
@@ -63,15 +63,4 @@ func Login(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, &AuthOutput{Token: token})
 	}
-}
-
-func getCredentials(c *gin.Context) (*CredentialsInput, error) {
-
-	var credentials = &CredentialsInput{}
-	var err = c.ShouldBindJSON(credentials)
-	if err == nil {
-		err = validator.New().Struct(credentials)
-	}
-
-	return credentials, err
 }
