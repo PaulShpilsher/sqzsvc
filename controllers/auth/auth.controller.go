@@ -9,73 +9,69 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 ///////////  Register new user
 
-type RegisterInput struct {
-	Email    string `json:"email" binding:"required"`    // max 256 chars
-	Password string `json:"password" binding:"required"` // max 72 chars
-}
-
 func Register(c *gin.Context) {
-	var input RegisterInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
 
-	// TODO: validate input
-
-	user := models.User{
-		Email:    strings.TrimSpace(input.Email),
-		Password: strings.TrimSpace(input.Password),
-	}
-
-	_, err := user.SaveUser()
+	credentials, err := getCredentials(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	log.Println("User registered", user)
+	user := models.User{
+		Email:    strings.TrimSpace(credentials.Email),
+		Password: strings.TrimSpace(credentials.Password),
+	}
 
+	if _, err := user.SaveUser(); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	log.Println("User registered", user)
 	c.JSON(http.StatusOK, gin.H{"message": "registration success"})
 }
 
 ///////////  Login user
 
-type LoginInput struct {
-	Email    string `json:"email" binding:"required"`    // max 256 chars
-	Password string `json:"password" binding:"required"` // max 72 chars
-}
-
 func Login(c *gin.Context) {
 
-	var input LoginInput
-
-	if err := c.ShouldBindJSON(&input); err != nil {
+	credentials, err := getCredentials(c)
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	user := &models.User{}
-	if _, ok := user.GetUserByEmail(input.Email); !ok {
-		// user not found
+	if _, ok := user.GetUserByEmail(credentials.Email); !ok {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "incorrect credentials"})
 		return
 	}
 
-	if err := utils.VerifyPassword(input.Password, user.Password); err != nil {
-		// password mismatch
+	err = utils.VerifyPassword(credentials.Password, user.Password)
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "incorrect credentials"})
 		return
 	}
 
 	if token, err := token.GenerateToken(user); err != nil {
-		// cant generate token
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
 	} else {
-		c.JSON(http.StatusOK, gin.H{"token": token})
+		c.JSON(http.StatusOK, &AuthOutput{Token: token})
 	}
+}
+
+func getCredentials(c *gin.Context) (*CredentialsInput, error) {
+
+	var credentials = &CredentialsInput{}
+	var err = c.ShouldBindJSON(credentials)
+	if err == nil {
+		err = validator.New().Struct(credentials)
+	}
+
+	return credentials, err
 }
