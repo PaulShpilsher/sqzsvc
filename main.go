@@ -2,7 +2,8 @@ package main
 
 import (
 	"log"
-	"sqzsvc/controllers"
+	authController "sqzsvc/controllers/auth"
+	urlController "sqzsvc/controllers/url"
 	"sqzsvc/middlewares"
 	"sqzsvc/models"
 
@@ -11,10 +12,7 @@ import (
 )
 
 func registerRoutes(g *gin.Engine) {
-	authController := &controllers.AuthController{}
-	urlController := &controllers.UrlController{}
-
-	g.GET("/:shortCode", urlController.GotoLongUrl)
+	g.GET("/:shortCode", urlController.RedirectShortCode)
 
 	apiRoute := g.Group("/api")
 	{

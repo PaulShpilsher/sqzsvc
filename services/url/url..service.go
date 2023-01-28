@@ -1,21 +1,17 @@
-package services
+package url
 
 import (
 	"fmt"
 	models "sqzsvc/models"
 )
 
-type ShortCodeService struct {
-	Identity *models.Identity
-}
-
-func (s *ShortCodeService) RegisterLongUrl(longUrl string) (string, error) {
+func RegisterLongUrl(identity *models.Identity, longUrl string) (string, error) {
 
 	// TODO: validate URL
 	// TODO: normalize URL
 
 	userUrl := &models.UserUrl{
-		UserID:  s.Identity.UserID,
+		UserID:  identity.UserID,
 		LongUrl: longUrl,
 	}
 
@@ -27,7 +23,7 @@ func (s *ShortCodeService) RegisterLongUrl(longUrl string) (string, error) {
 	return userUrl.ShortCode, err
 }
 
-func (s *ShortCodeService) GetLongUrl(shortCode string) (string, error) {
+func GetLongUrl(shortCode string) (string, error) {
 
 	userUrl := &models.UserUrl{}
 	if _, ok := userUrl.GetByShortCode(shortCode); !ok {

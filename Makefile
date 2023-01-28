@@ -1,7 +1,10 @@
-.PHONY: postgres adminer migrate migrate-down
+.PHONY: postgres adminer migrate migrate-down dev
 
 build:
 	go build -o bin/
+
+dev:
+	go run main.go
 
 postgres:
 	docker run --rm -ti --network host \
