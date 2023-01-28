@@ -39,5 +39,5 @@ func main() {
 	r := gin.Default()
 	registerRoutes(r)
 
-	r.Run("localhost:5555")
+	r.Run(":5555")
 }
