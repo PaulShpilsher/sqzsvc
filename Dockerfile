@@ -1,4 +1,4 @@
-FROM golang:1.19.5
+FROM golang:1.19.5-alpine AS build-env
 
 WORKDIR /usr/src/app
 
@@ -6,15 +6,16 @@ WORKDIR /usr/src/app
 COPY go.mod go.sum ./
 RUN go mod download && go mod verify
 
-
 COPY . .
-RUN go build -v -o /usr/local/bin ./...
+RUN go build -v -o /tmp ./...
+
+
+FROM golang:1.19.5-alpine
+WORKDIR /app
+COPY --from=build-env /tmp/sqzsvc /app
+COPY --from=build-env /usr/src/app/.env  /app
+
 
 ENV GIN_MODE=release
-# ENV DB_CONNECTION=host=localhost user=postgres password=secret dbname=sqz-data port=5432 sslmode=disable
-# ENV TOKEN_SECRET=superDuperSecret
-# ENV TOKEN_HOUR_LIFESPAN=1
 
-
-EXPOSE 8010
-CMD ["sqzsvc"]
+CMD ["/app/sqzsvc"]
