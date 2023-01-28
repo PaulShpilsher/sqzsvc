@@ -1,4 +1,4 @@
-package controllers
+package auth
 
 import (
 	"log"
@@ -11,10 +11,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type AuthController struct {
-	*Controller
-}
-
 ///////////  Register new user
 
 type RegisterInput struct {
@@ -22,7 +18,7 @@ type RegisterInput struct {
 	Password string `json:"password" binding:"required"` // max 72 chars
 }
 
-func (me *AuthController) Register(c *gin.Context) {
+func Register(c *gin.Context) {
 	var input RegisterInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -54,7 +50,7 @@ type LoginInput struct {
 	Password string `json:"password" binding:"required"` // max 72 chars
 }
 
-func (me *AuthController) Login(c *gin.Context) {
+func Login(c *gin.Context) {
 
 	var input LoginInput
 
