@@ -3,7 +3,6 @@ package token
 import (
 	"errors"
 	"fmt"
-	"log"
 	"sqzsvc/models"
 	"sqzsvc/services/config"
 	"time"
@@ -32,7 +31,7 @@ func GenerateToken(user *models.User) (string, error) {
 	return tokenString, err
 }
 
-func DecodeToken(encodedToken string) (*models.Identity, error) {
+func DecodeToken(encodedToken string) (*Identity, error) {
 
 	token, err := jwt.Parse(encodedToken, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -41,28 +40,21 @@ func DecodeToken(encodedToken string) (*models.Identity, error) {
 		return []byte(config.TokenSecret), nil
 	})
 	if err != nil {
-		return &models.Identity{}, err
+		return &Identity{}, err
 	}
 
 	if !token.Valid {
-		return &models.Identity{}, errors.New("invalid token")
+		return &Identity{}, errors.New("invalid token")
 	}
-
-	// QUESTION: do we really need to verify claims???
-	// if err := token.Claims.Valid(); err != nil {
-	// 	fmt.Println("Invalid claims", err)
-	// 	return &models.Identity{}, err
-	// }
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return &models.Identity{}, errors.New("invalid token claims")
+		return &Identity{}, errors.New("invalid token claims")
 	}
 
-	ident := &models.Identity{
+	ident := &Identity{
 		UserID:    uint(claims[userIdClaimKey].(float64)),
 		UserEmail: claims[emailClaimKey].(string),
 	}
-	log.Println("Decoded Idenoty", *ident)
 	return ident, nil
 }
