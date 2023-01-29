@@ -11,9 +11,8 @@ import (
 
 type User struct {
 	Model
-	Email    string    `gorm:"size:256;not null;uniqueIndex;<-:create" json:"email"`
-	Password string    `gorm:"size:64;not null;" json:"password"`
-	UserUrls []UserUrl `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Email    string `gorm:"size:256;not null;uniqueIndex;<-:create" json:"email"`
+	Password string `gorm:"size:64;not null;" json:"password"`
 }
 
 func (u *User) GetUserById(id uint) (*User, error) {

@@ -16,12 +16,6 @@ type LongUrlInput struct {
 
 // POST: /api/short-code
 func CreateShortCode(c *gin.Context) {
-	identity, ok := controllers.GetIdentity(c)
-	if !ok {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unable to get indentity"})
-		return
-	}
-
 	input := &LongUrlInput{}
 	if err := controllers.GetFromBodyValidated(c, input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -34,7 +28,7 @@ func CreateShortCode(c *gin.Context) {
 		return
 	}
 
-	if shortCode, err := urlService.RegisterLongUrl(identity, url.String()); err != nil {
+	if shortCode, err := urlService.SubmitLongUrl(url.String(), c.ClientIP()); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	} else {
 		c.JSON(http.StatusOK, gin.H{"shortCode": shortCode})
