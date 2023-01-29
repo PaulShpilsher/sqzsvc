@@ -10,15 +10,11 @@ import (
 
 var db *gorm.DB
 
-func GetDb() *gorm.DB {
-	return db
-}
-
 func InitDb() {
 	db = connectDb()
 	log.Println("Connected to database")
 
-	if err := db.AutoMigrate(&User{}, &UserUrl{}); err != nil {
+	if err := db.AutoMigrate(&User{}, &UrlData{}); err != nil {
 		log.Fatalf("failed migrate database: %s", err.Error())
 	}
 
@@ -31,7 +27,6 @@ func connectDb() *gorm.DB {
 	database, err := gorm.Open(postgres.Open(config.DbDns), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("failed connect to database: %s", err.Error())
-		log.Fatal(err)
 	}
 	return database
 }

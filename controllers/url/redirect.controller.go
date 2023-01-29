@@ -11,18 +11,17 @@ import (
 
 // GET: /:shortCode
 func RedirectShortCode(c *gin.Context) {
-
 	shortCode := strings.TrimSpace(c.Param("shortCode"))
 	if len(shortCode) == 0 {
-		c.Status(http.StatusNotFound)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "missing short code"})
 		return
 	}
 
-	if longUrl, err := urlService.GetLongUrl(shortCode); err == nil {
+	if url, err := urlService.GetUrl(shortCode); err == nil {
 		// TODO: Log click with client IP ip := c.ClientIP()
-		c.Redirect(http.StatusFound, longUrl)
+		c.Redirect(http.StatusFound, url)
 	} else {
-		log.Println("Failed to get long url: ", err)
+		log.Printf("Sort Code [%s] failed produce url | %s\n", shortCode, err.Error())
 		c.Status(http.StatusNotFound)
 	}
 }

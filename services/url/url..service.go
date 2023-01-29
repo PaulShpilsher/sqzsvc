@@ -2,31 +2,32 @@ package url
 
 import (
 	"fmt"
-	models "sqzsvc/models"
-	"sqzsvc/services/token"
+	"sqzsvc/models"
 )
 
-func RegisterLongUrl(identity *token.Identity, longUrl string) (string, error) {
+func SubmitUrl(url string, clientAddress string) (string, error) {
 
-	userUrl := &models.UserUrl{
-		UserID:  identity.UserID,
-		LongUrl: longUrl,
+	var err error = nil
+
+	userUrl := &models.UrlData{
+		ClientAddress: clientAddress,
+		Url:           url,
 	}
 
-	var err error
-	if _, ok := userUrl.GetByUserAndUrl(); !ok {
+	if _, ok := userUrl.GetByUrl(url); !ok {
 		err = userUrl.Save()
 	}
 
 	return userUrl.ShortCode, err
 }
 
-func GetLongUrl(shortCode string) (string, error) {
+func GetUrl(shortCode string) (string, error) {
 
-	userUrl := &models.UserUrl{}
+	userUrl := &models.UrlData{}
+
 	if _, ok := userUrl.GetByShortCode(shortCode); !ok {
 		return "", fmt.Errorf("short code '%s' not found", shortCode)
 	}
 
-	return userUrl.LongUrl, nil
+	return userUrl.Url, nil
 }

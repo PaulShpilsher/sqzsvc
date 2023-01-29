@@ -4,7 +4,6 @@ import (
 	"fmt"
 	authController "sqzsvc/controllers/auth"
 	urlController "sqzsvc/controllers/url"
-	"sqzsvc/middlewares"
 	"sqzsvc/models"
 	"sqzsvc/services/config"
 
@@ -23,7 +22,7 @@ func registerRoutes(g *gin.Engine) {
 
 	{
 		route := apiRoute.Group("short-code")
-		route.Use(middlewares.JwtAuthMiddleware())
+		// route.Use(middlewares.JwtAuthMiddleware())
 		route.POST("/", urlController.CreateShortCode)
 	}
 }
