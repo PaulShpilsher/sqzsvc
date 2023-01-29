@@ -14,11 +14,6 @@ RUN go build -v -o /tmp ./...
 FROM golang:1.19.5-alpine
 
 WORKDIR /app
-
 COPY --from=build-env /tmp/sqzsvc /app
-COPY --from=build-env /usr/src/app/.env  /app
-
-
-ENV GIN_MODE=release
 
 CMD ["/app/sqzsvc"]

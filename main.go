@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	authController "sqzsvc/controllers/auth"
 	urlController "sqzsvc/controllers/url"
 	"sqzsvc/middlewares"
@@ -37,5 +38,6 @@ func main() {
 	}
 	r := gin.Default()
 	registerRoutes(r)
-	r.Run(":5555")
+	r.Run(fmt.Sprintf(":%d", config.Port))
+
 }
