@@ -9,12 +9,12 @@ func SubmitUrl(url string, clientAddress string) (string, error) {
 
 	var err error = nil
 
-	urlData := &models.UrlEntry{
+	urlData := &models.Url{
 		ClientAddress: clientAddress,
-		Url:           url,
+		LongUrl:       url,
 	}
 
-	if _, ok := urlData.GetByUrl(url); !ok {
+	if _, ok := urlData.GetByLongUrl(url); !ok {
 		err = urlData.Save()
 	}
 
@@ -23,11 +23,11 @@ func SubmitUrl(url string, clientAddress string) (string, error) {
 
 func GetUrl(shortCode string) (string, error) {
 
-	userUrl := &models.UrlEntry{}
+	userUrl := &models.Url{}
 
 	if _, ok := userUrl.GetByShortCode(shortCode); !ok {
 		return "", fmt.Errorf("short code '%s' not found", shortCode)
 	}
 
-	return userUrl.Url, nil
+	return userUrl.LongUrl, nil
 }

@@ -16,8 +16,8 @@ func InitDb() {
 
 	if err := db.AutoMigrate(
 		&User{},
-		&UrlEntry{},
-		&UrlTransition{}); err != nil {
+		&Url{},
+		&Transition{}); err != nil {
 		log.Fatalf("failed migrate database: %s", err.Error())
 	}
 

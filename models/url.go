@@ -8,18 +8,18 @@ import (
 	"gorm.io/gorm"
 )
 
-type UrlEntry struct {
+type Url struct {
 	ShortCode     string    `gorm:"type:varchar(16);not null;primarykey"`
-	Url           string    `gorm:"type:varchar(4000);not null;uniqueIndex"`
+	LongUrl       string    `gorm:"type:varchar(4000);not null;uniqueIndex"`
 	CreatedAt     time.Time `gorm:"not null"`
 	ClientAddress string    `gorm:"type:varchar(64);not null;index"`
 }
 
-func (u *UrlEntry) Save() error {
+func (u *Url) Save() error {
 	return db.Create(&u).Error
 }
 
-func (u *UrlEntry) BeforeCreate(tx *gorm.DB) error {
+func (u *Url) BeforeCreate(tx *gorm.DB) error {
 
 	if code, err := nextInSequence(); err != nil {
 		return err
@@ -29,14 +29,14 @@ func (u *UrlEntry) BeforeCreate(tx *gorm.DB) error {
 	}
 }
 
-func (u *UrlEntry) GetByUrl(url string) (*UrlEntry, bool) {
-	tx := db.Limit(1).Where(&UrlEntry{Url: url}).Find(&u)
+func (u *Url) GetByLongUrl(longUrl string) (*Url, bool) {
+	tx := db.Limit(1).Where(&Url{LongUrl: longUrl}).Find(&u)
 	ok := !errors.Is(tx.Error, gorm.ErrRecordNotFound) && tx.RowsAffected == 1
 	return u, ok
 }
 
-func (u *UrlEntry) GetByShortCode(shortCode string) (*UrlEntry, bool) {
-	tx := db.Limit(1).Where(&UrlEntry{ShortCode: shortCode}).Find(&u)
+func (u *Url) GetByShortCode(shortCode string) (*Url, bool) {
+	tx := db.Limit(1).Where(&Url{ShortCode: shortCode}).Find(&u)
 	ok := !errors.Is(tx.Error, gorm.ErrRecordNotFound) && tx.RowsAffected == 1
 	return u, ok
 }
