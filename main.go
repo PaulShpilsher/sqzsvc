@@ -1,12 +1,11 @@
 package main
 
 import (
-	"log"
-	"os"
 	authController "sqzsvc/controllers/auth"
 	urlController "sqzsvc/controllers/url"
 	"sqzsvc/middlewares"
 	"sqzsvc/models"
+	"sqzsvc/services/config"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -30,17 +29,13 @@ func registerRoutes(g *gin.Engine) {
 }
 
 func main() {
-
-	if err := godotenv.Load(".env"); err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	godotenv.Load(".env")
+	config.InitConfig()
 
 	models.InitDb()
 
-	if _, ok := os.LookupEnv("DEBUG"); !ok {
+	if !config.Debug {
 		gin.SetMode(gin.ReleaseMode)
-	} else {
-		log.Println("DEBUG MODE")
 	}
 
 	r := gin.Default()
