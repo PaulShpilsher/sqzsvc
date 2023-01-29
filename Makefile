@@ -14,11 +14,11 @@ build:
 
 .PHONY: serve
 serve:
-	go run main.go
+	go run main.go -debug=false -port=5555 -db-dns="host=localhost user=postgres password=secret dbname=sqz-data port=5432 sslmode=disable"
 
 .PHONY: dev
 dev:
-	DEBUG=1 && go run main.go
+	go run main.go -debug=true -port=5555 -db-dns="host=localhost user=postgres password=secret dbname=sqz-data port=5432 sslmode=disable"
 
 .PHONY: postgres
 postgres:

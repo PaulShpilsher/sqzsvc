@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"sqzsvc/models"
+	"sqzsvc/services/token"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -9,15 +9,15 @@ import (
 
 const identityKey = "identity"
 
-func GetIdentity(c *gin.Context) (*models.Identity, bool) {
+func GetIdentity(c *gin.Context) (*token.Identity, bool) {
 	if ident, ok := c.Get(identityKey); ok {
-		return ident.(*models.Identity), true
+		return ident.(*token.Identity), true
 	} else {
-		return &models.Identity{}, false
+		return &token.Identity{}, false
 	}
 }
 
-func SetIdentity(c *gin.Context, identity *models.Identity) {
+func SetIdentity(c *gin.Context, identity *token.Identity) {
 	c.Set(identityKey, identity)
 }
 

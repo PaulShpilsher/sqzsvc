@@ -3,12 +3,10 @@ package url
 import (
 	"fmt"
 	models "sqzsvc/models"
+	"sqzsvc/services/token"
 )
 
-func RegisterLongUrl(identity *models.Identity, longUrl string) (string, error) {
-
-	// TODO: validate URL
-	// TODO: normalize URL
+func RegisterLongUrl(identity *token.Identity, longUrl string) (string, error) {
 
 	userUrl := &models.UserUrl{
 		UserID:  identity.UserID,

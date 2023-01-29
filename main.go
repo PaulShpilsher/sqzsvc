@@ -1,15 +1,14 @@
 package main
 
 import (
-	"log"
-	"os"
+	"fmt"
 	authController "sqzsvc/controllers/auth"
 	urlController "sqzsvc/controllers/url"
 	"sqzsvc/middlewares"
 	"sqzsvc/models"
+	"sqzsvc/services/config"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 )
 
 func registerRoutes(g *gin.Engine) {
@@ -30,22 +29,15 @@ func registerRoutes(g *gin.Engine) {
 }
 
 func main() {
-
-	if err := godotenv.Load(".env"); err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	config.InitConfig()
 
 	models.InitDb()
 
-	if _, ok := os.LookupEnv("DEBUG"); !ok {
+	if !config.Debug {
 		gin.SetMode(gin.ReleaseMode)
-	} else {
-		log.Println("DEBUG MODE")
 	}
-
 	r := gin.Default()
-
 	registerRoutes(r)
+	r.Run(fmt.Sprintf(":%d", config.Port))
 
-	r.Run(":5555")
 }
