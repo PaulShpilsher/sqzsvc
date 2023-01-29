@@ -28,6 +28,8 @@ func CreateShortCode(c *gin.Context) {
 		return
 	}
 
+	// TODO: blacklisting (e.g. recursive redirects)
+
 	if shortCode, err := urlService.SubmitLongUrl(url.String(), c.ClientIP()); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	} else {

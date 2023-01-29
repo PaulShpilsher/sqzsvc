@@ -20,7 +20,7 @@ func RedirectShortCode(c *gin.Context) {
 
 	if url, err := urlService.GetUrl(shortCode); err == nil {
 		transitionService.LogTransition(shortCode, c.ClientIP())
-		c.Redirect(http.StatusFound, url)
+		c.Redirect(http.StatusFound, url) // in production use c.Redirect(http.StatusMovedPermanently, url)
 	} else {
 		log.Printf("Sort Code [%s] failed produce url | %s\n", shortCode, err.Error())
 		c.Status(http.StatusNotFound)
