@@ -28,7 +28,7 @@ func CreateShortCode(c *gin.Context) {
 		return
 	}
 
-	if shortCode, err := urlService.SubmitUrl(url.String(), c.ClientIP()); err != nil {
+	if shortCode, err := urlService.SubmitLongUrl(url.String(), c.ClientIP()); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	} else {
 		c.JSON(http.StatusOK, gin.H{"shortCode": shortCode})

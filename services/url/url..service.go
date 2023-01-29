@@ -5,29 +5,29 @@ import (
 	"sqzsvc/models"
 )
 
-func SubmitUrl(url string, clientAddress string) (string, error) {
+func SubmitLongUrl(longUrl string, clientAddress string) (string, error) {
 
 	var err error = nil
 
-	urlData := &models.Url{
+	url := &models.Url{
 		ClientAddress: clientAddress,
-		LongUrl:       url,
+		LongUrl:       longUrl,
 	}
 
-	if _, ok := urlData.GetByLongUrl(url); !ok {
-		err = urlData.Save()
+	if _, ok := url.GetByLongUrl(longUrl); !ok {
+		err = url.Save()
 	}
 
-	return urlData.ShortCode, err
+	return url.ShortCode, err
 }
 
 func GetUrl(shortCode string) (string, error) {
 
-	userUrl := &models.Url{}
+	url := &models.Url{}
 
-	if _, ok := userUrl.GetByShortCode(shortCode); !ok {
+	if _, ok := url.GetByShortCode(shortCode); !ok {
 		return "", fmt.Errorf("short code '%s' not found", shortCode)
 	}
 
-	return userUrl.LongUrl, nil
+	return url.LongUrl, nil
 }
