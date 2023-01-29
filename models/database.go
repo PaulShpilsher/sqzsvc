@@ -2,7 +2,7 @@ package models
 
 import (
 	"log"
-	"os"
+	"sqzsvc/services/config"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -28,8 +28,7 @@ func InitDb() {
 }
 
 func connectDb() *gorm.DB {
-	dsn := os.Getenv("DB_CONNECTION")
-	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	database, err := gorm.Open(postgres.Open(config.DbDns), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("failed connect to database: %s", err.Error())
 		log.Fatal(err)

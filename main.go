@@ -8,7 +8,6 @@ import (
 	"sqzsvc/services/config"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 )
 
 func registerRoutes(g *gin.Engine) {
@@ -29,7 +28,6 @@ func registerRoutes(g *gin.Engine) {
 }
 
 func main() {
-	godotenv.Load(".env")
 	config.InitConfig()
 
 	models.InitDb()
@@ -37,10 +35,7 @@ func main() {
 	if !config.Debug {
 		gin.SetMode(gin.ReleaseMode)
 	}
-
 	r := gin.Default()
-
 	registerRoutes(r)
-
 	r.Run(":5555")
 }

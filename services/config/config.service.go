@@ -2,9 +2,10 @@ package config
 
 import (
 	"flag"
-	"log"
 	"os"
 	"strconv"
+
+	"github.com/joho/godotenv"
 )
 
 var (
@@ -17,6 +18,7 @@ var (
 
 func InitConfig() {
 
+	godotenv.Load()
 	flag.BoolVar(&Debug, "debug", getEnvBool("DEBUG", Debug), "Debug mode")
 	flag.IntVar(&Port, "port", getEnvInt("PORT", Port), "Listening port")
 	flag.StringVar(&DbDns, "db-dns", getEnvString("DB_DNS", DbDns), "Database DNS string")
@@ -24,12 +26,6 @@ func InitConfig() {
 	flag.StringVar(&TokenSecret, "token-secret", getEnvString("TOKEN_SECRET", TokenSecret), "Token secret")
 
 	flag.Parse()
-
-	log.Println("config.Debug:", Debug)
-	log.Println("config.Port:", Port)
-	log.Println("config.DbDns:", DbDns)
-	log.Println("config.TokenHourLifespan:", TokenHourLifespan)
-	log.Println("config.TokenSecret:", TokenSecret)
 }
 
 func getEnvString(key string, defaultValue string) string {
