@@ -37,9 +37,12 @@ func main() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	router := gin.Default()
+	router := gin.New()
 
-	router.Use(cors.Default())
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowAllOrigins = true //IMPORTANT: NOT FOR PROD
+	router.Use(cors.New(corsConfig))
+	// router.Use(cors.Default())
 
 	registerRoutes(router)
 	router.Run(fmt.Sprintf(":%d", config.Port))
