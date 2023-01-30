@@ -39,3 +39,8 @@ adminer:
 # migrate-down:
 # 	migrate -source file://migrations \
 # 		-database postgres://postgres:secret@localhost/sqz-data?sslmode=disable down
+
+# install migrate 
+# curl -s https://packagecloud.io/install/repositories/golang-migrate/migrate/script.deb.sh | sudo bash
+# sudo apt-get update
+# sudo apt-get install migrate

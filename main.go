@@ -7,6 +7,7 @@ import (
 	"sqzsvc/models"
 	"sqzsvc/services/config"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -35,8 +36,15 @@ func main() {
 	if !config.Debug {
 		gin.SetMode(gin.ReleaseMode)
 	}
-	r := gin.Default()
-	registerRoutes(r)
-	r.Run(fmt.Sprintf(":%d", config.Port))
+
+	router := gin.New()
+
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowAllOrigins = true //IMPORTANT: NOT FOR PROD
+	router.Use(cors.New(corsConfig))
+	// router.Use(cors.Default())
+
+	registerRoutes(router)
+	router.Run(fmt.Sprintf(":%d", config.Port))
 
 }
