@@ -1,4 +1,4 @@
-FROM golang:1.19.5-alpine AS build-env
+FROM golang:1.20-alpine AS build-env
 
 WORKDIR /usr/src/app
 
@@ -11,7 +11,7 @@ RUN go build -v -o /tmp ./...
 
 # Runtime image
 
-FROM golang:1.19.5-alpine
+FROM golang:1.20-alpine
 
 WORKDIR /app
 COPY --from=build-env /tmp/sqzsvc /app
