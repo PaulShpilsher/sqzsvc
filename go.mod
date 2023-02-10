@@ -1,8 +1,9 @@
 module sqzsvc
 
-go 1.19
+go 1.20
 
 require (
+	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-gonic/gin v1.8.2
 	github.com/go-playground/validator/v10 v10.11.1
 	github.com/golang-jwt/jwt/v4 v4.4.3
