@@ -2,6 +2,7 @@ package config
 
 import (
 	"flag"
+	"log"
 	"os"
 	"strconv"
 
@@ -9,23 +10,33 @@ import (
 )
 
 var (
-	Debug             bool   = false
-	Port              int    = 5555
-	DbDns             string = ""
-	TokenHourLifespan int    = 1
-	TokenSecret       string = ""
+	Host              string
+	Debug             bool
+	Port              int
+	Docker            bool
+	DbDns             string
+	TokenHourLifespan int
+	TokenSecret       string
 )
 
 func InitConfig() {
 
 	godotenv.Load()
-	flag.BoolVar(&Debug, "debug", getEnvBool("DEBUG", Debug), "Debug mode")
-	flag.IntVar(&Port, "port", getEnvInt("PORT", Port), "Listening port")
-	flag.StringVar(&DbDns, "db-dns", getEnvString("DB_DNS", DbDns), "Database DNS string")
-	flag.IntVar(&TokenHourLifespan, "token-hour-lifespan", getEnvInt("TOKEN_HOUR_LIFESPAN", TokenHourLifespan), "Token lifespan (hours)")
-	flag.StringVar(&TokenSecret, "token-secret", getEnvString("TOKEN_SECRET", TokenSecret), "Token secret")
+
+	flag.BoolVar(&Debug, "debug", getEnvBool("DEBUG", false), "Debug mode")
+	flag.StringVar(&Host, "host	", getEnvString("HOST", "localhost"), "Server hoat")
+	flag.IntVar(&Port, "port", getEnvInt("PORT", 5555), "Listening port")
+	flag.BoolVar(&Docker, "docker", getEnvBool("DOCKER", false), "Running in docker")
+	flag.StringVar(&DbDns, "db-dns", getEnvString("DB_DNS", ""), "Database DNS string")
+	flag.IntVar(&TokenHourLifespan, "token-hour-lifespan", getEnvInt("TOKEN_HOUR_LIFESPAN", 1), "Token lifespan (hours)")
+	flag.StringVar(&TokenSecret, "token-secret", getEnvString("TOKEN_SECRET", ""), "Token secret")
 
 	flag.Parse()
+
+	if Docker {
+		log.Println("Running in docker. Overriding host address to 0.0.0.0")
+		Host = "0.0.0.0"
+	}
 }
 
 func getEnvString(key string, defaultValue string) string {

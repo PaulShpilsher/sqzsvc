@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	authController "sqzsvc/controllers/auth"
 	urlController "sqzsvc/controllers/url"
 	"sqzsvc/models"
@@ -52,6 +53,9 @@ func main() {
 	// router.Use(cors.Default())
 
 	registerRoutes(router)
-	router.Run(fmt.Sprintf(":%d", config.Port))
+
+	serverAddress := fmt.Sprintf("%s:%d", config.Host, config.Port)
+	log.Printf("Server started at http://%s ...\n", serverAddress)
+	router.Run(serverAddress)
 
 }
