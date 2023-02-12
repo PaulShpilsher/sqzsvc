@@ -8,6 +8,7 @@ import (
 	"sqzsvc/services/config"
 
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,6 +27,12 @@ func registerRoutes(g *gin.Engine) {
 		// route.Use(middlewares.JwtAuthMiddleware())
 		route.POST("/", urlController.CreateShortCode)
 	}
+
+	// serve static files
+	g.Use(static.Serve("/", static.LocalFile("./www", true)))
+	g.NoRoute(func(c *gin.Context) { // fallback
+		c.File("./www/index.html")
+	})
 }
 
 func main() {
