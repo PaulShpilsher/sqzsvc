@@ -2,7 +2,6 @@ package config
 
 import (
 	"flag"
-	"log"
 	"os"
 	"strconv"
 
@@ -32,11 +31,6 @@ func InitConfig() {
 	flag.StringVar(&TokenSecret, "token-secret", getEnvString("TOKEN_SECRET", ""), "Token secret")
 
 	flag.Parse()
-
-	if Docker {
-		log.Println("Running in docker. Overriding host address to 0.0.0.0")
-		Host = "0.0.0.0"
-	}
 }
 
 func getEnvString(key string, defaultValue string) string {
