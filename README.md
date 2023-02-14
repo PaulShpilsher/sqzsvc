@@ -97,5 +97,10 @@ Add additional notes about how to deploy this on a live system.
 
 ## 🎉 Acknowledgements <a name = "acknowledgement"></a>
 
-- Inspiration ["Simple Made Easy" - Rich Hickey (2011)](https://www.youtube.com/watch?v=SxdOUGdseq4)
-- References
+### Inspiration
+
+- ["Simple Made Easy" - Rich Hickey (2011)](https://www.youtube.com/watch?v=SxdOUGdseq4)
+
+### References
+
+- [Gin Examples](https://github.com/gin-gonic/examples)
